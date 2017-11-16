@@ -19,221 +19,835 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the SDU alumni API!
+# User
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
-
-# Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
+## Sign Up
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+curl "http://SERVER_NAME/v1/users"
+
+body
+{ "user":
+	{
+		"email" : "ts1@gmail.com",
+		"password" : "123456789",
+		"password_confirmation" : "123456789",
+		"specialty_id" : 1,
+
+		"graduation_date" : "2017-01-01",
+		"faculty_id": 1,
+		"industry_ids" :[1,2,3]
+		
+	}
+}
 ```
 
-```javascript
-const kittn = require('kittn');
 
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
 
 > The above command returns JSON structured like this:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+{
+    "data": {
+        "user": {
+            "id": 23,
+            "email": "ts1@gmail.com",
+            "authentication_token": "2CCC9G3xDpsgkyP1iMd_"
+        }
+    }
+}
 ```
 
-This endpoint retrieves all kittens.
+This endpoint registers new user. Returns authentification Token for current session
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`POST http://SERVER_NAME/v1/users`
 
-### Query Parameters
+### Request Body Parameters
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+Parameter | Required | Type | Description
+--------- | ------- |------| ----------------
+email | Yes | String | User's email
+password | Yes | String | User's password
+password_confiramtion| Yes | String | Password confirmation
+faculty_id | Yes | int | Id of faculty, which user graduated
+specialty_id |  Yes | int | Id of user's specialty, in specified faculty
+graduation_date | Yes | int | User's graduation date
+industry_ids | Optional | int array | User's current industry sphares
+first_name | Optional | string | User's first name
+last_name | Optional | string | User's surname
+
 
 <aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+Remember — a happy user is an authenticated user!
 </aside>
 
-## Get a Specific Kitten
+## Sign In
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
 
-```python
-import kittn
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
+curl "http://SERVER_NAME/v1/sessions"
 
-```javascript
-const kittn = require('kittn');
+body
+{
+	"email": "macie_howell@smitham.com",
+	"password":"123456789"
+}
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+    "data": {
+        "user": {
+            "id": 4,
+            "email": "macie_howell@smitham.com",
+            "authentication_token": "y63gSE2ooYxJYGcjpqhT"
+        }
+    }
 }
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint creates session and authentification token for user's current session.
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST http://SERVER_NAME/v1/sessions`
+
+### Request Body Parameters
+
+Parameter | Requaired | Type | Description
+--------- | ------- |------| -----------
+email | Yes | String | User's email
+password | Yes | String | User's password
+## Destroy session
+
+
+
+```shell
+curl "http://example.com/v1/sessions"
+  -H "X-User-Email: kyra@schroeder.net" 
+  -H "X-User-Token: aCzvjX7omkMZAGMk4VMb"
+```
+
+
+
+> The above command returns no data, just status 
+
+```json
+
+```
+
+This endpoint destroys a specific session.Headers "X-User-Email:" and "X-User-Token" required.
+
+### HTTP Request
+
+`DELETE http://SERVER_NAME/v1/sessions`
+
+
+
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+## Profile Info
+
+This endpoint gets information about specified user(current user can specify himself).
+
+```shell
+curl "http://example.com/v1/users/2"
+  -H "X-User-Email: kyra@schroeder.net" 
+  -H "X-User-Token: aCzvjX7omkMZAGMk4VMb"
+```
+
+
+
+> The above command returns no data, just status 
+
+```json
+{
+    "is_friend": false,
+    "friends": 1,
+    "data": {
+        "id": 2,
+        "email": "kyra@schroeder.net",
+        "first_name": "Janie",
+        "last_name": "Harber",
+        "graduation_date": "2002-01-09",
+        "specialty_id": 17,
+        "specialty": "Учет и аудит",
+        "faculty": "Инженерии и естественных наук",
+        "industry": null
+    }
+}
+```
+
+Headers "X-User-Email:" and "X-User-Token" required.
+
+### HTTP Request
+
+`GET http://SERVER_NAME/v1/users/(:id)`
 
 ### URL Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+Parameter | Requaired | Type | Description
+--------- | ------- |------| -----------
+(:id) | Yes | int | Id of user, whose profile info we want to get
 
-## Delete a Specific Kitten
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
 
-```python
-import kittn
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+## Update User info
+
+This endpoint updates information about user.User must be authenticated to do this request.
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
+curl "http://example.com/v1/users/"
+  -H "X-User-Email: kyra@schroeder.net" 
+  -H "X-User-Token: aCzvjX7omkMZAGMk4VMb"
 ```
 
-```javascript
-const kittn = require('kittn');
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
+
+> The above command returns no data, just status 
+
+```json
+{
+    "is_friend": false,
+    "friends": 1,
+    "data": {
+        "id": 2,
+        "email": "kyra@schroeder.net",
+        "first_name": "Janie",
+        "last_name": "Harber",
+        "graduation_date": "2002-01-09",
+        "specialty_id": 17,
+        "specialty": "Учет и аудит",
+        "faculty": "Инженерии и естественных наук",
+        "industry": null
+    }
+}
+```
+
+Headers "X-User-Email:" and "X-User-Token" required.
+
+### HTTP Request
+
+`PUT http://SERVER_NAME/v1/users/(:id)`
+
+### Request Body Parameters
+
+Parameter | Required | Type | Description
+--------- | ------- |------| ----------------
+email | Optional | String | User's email
+password | Optional | String | User's password
+password_confiramtion| Optional | String | Password confirmation
+faculty_id | Optional | int | Id of faculty, which user graduated
+specialty_id |  Optional | int | Id of user's specialty, in specified faculty
+graduation_date | Optional | int | User's graduation date
+industry_ids | Optional | int array | User's current industry sphares
+first_name | Optional | string | User's first name
+last_name | Optional | string | User's surname
+
+
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+
+
+## Search User
+
+This endpoint gets list of users by filter params.
+
+```shell
+curl "http://localhost:3000/v1/find_friends?by_period[started_at]=20000101&by_period[ended_at]=202001013"
+  -H "X-User-Email: kyra@schroeder.net" 
+  -H "X-User-Token: aCzvjX7omkMZAGMk4VMb"
+```
+
+
+
+> The above command returns no data, just status 
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "email": "zshanabek@gmail.com",
+            "first_name": "Anya",
+            "last_name": "Kessler",
+            "graduation_date": "2017-01-26",
+            "specialty_id": 1,
+            "faculty_id": 3,
+            "industry": []
+        },
+        {
+            "id": 2,
+            "email": "haie_auer@oberbrunner.com",
+            "first_name": "Garfield",
+            "last_name": "Pfannerstill",
+            "graduation_date": "2013-10-21",
+            "specialty_id": 21,
+            "faculty_id": 1,
+            "industry": []
+        },
+        {
+            "id": 3,
+            "email": "aracely.predovic@mayershanahan.co",
+            "first_name": "Princess",
+            "last_name": "Hane",
+            "graduation_date": "2002-04-26",
+            "specialty_id": 16,
+            "faculty_id": 4,
+            "industry": []
+        }
+    ]
+}
+```
+
+Headers "X-User-Email:" and "X-User-Token" required.
+
+### HTTP Request
+
+`GET http://SERVER_NAME/v1/find_friends`
+
+### URL Parameters
+
+Parameter | Required | Type | Description
+--------- | ------- |------| ---------------------
+by_period[started_at] | Optional | int | Start of time period, in which filter will search for user's graduation date
+by_period[ended_at] | Optional(YES if "by_period[started_at]" specified) | int | End of time period
+by_faculty | Optional | int | Id of faculty
+by_specialty | Optional | int | Id of specialty in faculty
+by_industry | Optional | int | Id of industry
+
+
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+
+# User Connections (Friendship)
+
+
+
+
+
+##User's friends
+
+This endpoint shows list of friends of specified user.
+Headers "X-User-Email:" and "X-User-Token" required
+
+
+```shell
+curl "http://localhost:3000/v1/requested_friends"
+  -H "X-User-Token: 2rkx82qQJYqZPyDdyGpz"
+  -H "X-User-Email: kyra@schroeder.net"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "deleted" : ":("
+    "data": [
+        {
+            "id": 4,
+            "email": "macie_howell@smitham.com",
+            "first_name": "Claude",
+            "last_name": "Fritsch",
+            "graduation_date": "2016-03-13",
+            "specialty_id": 19,
+            "faculty_id": 3,
+            "industry": []
+        },
+        {
+            "id": 1,
+            "email": "zshanabek@gmail.com",
+            "first_name": "Anya",
+            "last_name": "Kessler",
+            "graduation_date": "2017-01-26",
+            "specialty_id": 1,
+            "faculty_id": 3,
+            "industry": []
+        }
+    ]
 }
 ```
 
-This endpoint deletes a specific kitten.
+
 
 ### HTTP Request
 
-`DELETE http://example.com/kittens/<ID>`
+`GET http://localhost:3000/v1/users/(:user_id)/friends`
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
 
 ### URL Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+Parameter | Required | Type | Description
+--------- | ------- |------| -----------
+(:user_id) | Yes | int | Id of user, whose friends list you want to see
+
+
+##Friendship request
+
+This endpoint makes friendship request from current user to specified user.
+Headers "X-User-Email:" and "X-User-Token" required
+
+```shell
+curl "http://SERVER_NAME/v1/users/2/friendships"
+  -H "X-User-Token: 7i9cM2-z7TrwhGLiP66B"
+  -H "X-User-Email: temmir@gmail.com"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "is_friend": false,
+    "friends": 1,
+    "data": {
+        "id": 2,
+        "email": "kyra@schroeder.net",
+        "first_name": "Janie",
+        "last_name": "Harber",
+        "graduation_date": "2002-01-09",
+        "specialty_id": 17,
+        "specialty": "Учет и аудит",
+        "faculty": "Инженерии и естественных наук",
+        "industry": null
+    }
+}
+```
+
+
+
+### HTTP Request
+
+`POST http://SERVER_NAME/v1/users/:user_id/friendships`
+
+### URL Parameters
+
+Parameter | Required | Type | Description
+--------- | ------- |------| -----------
+(:user_id) | Yes | int | Id of user which you want to add as friend
+
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+##Friendship accept
+
+This endpoint accepts friendship request of specified user.
+Headers "X-User-Email:" and "X-User-Token" required
+
+
+```shell
+curl "http://localhost:3000/v1/users/22/accept"
+  -H "X-User-Token: 2rkx82qQJYqZPyDdyGpz"
+  -H "X-User-Email: zshanabek@gmail.com"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "is_friend": true,
+    "friends": 1,
+    "data": {
+        "id": 22,
+        "email": "temmir@gmail.com",
+        "first_name": null,
+        "last_name": null,
+        "graduation_date": "2017-01-01",
+        "specialty_id": 1,
+        "specialty": "Информационные системы",
+        "faculty": "Инженерии и естественных наук",
+        "industry": null
+    }
+}
+```
+
+
+
+### HTTP Request
+
+`PUT http://localhost:3000/v1/users/(:user_id)/accept`
+
+### URL Parameters
+
+Parameter | Required | Type | Description
+--------- | ------- |------| -----------
+(:user_id) | Yes | int | Id of user which you want to add as friend
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+##Friendship decline
+
+This endpoint declines friendship request of specified user.
+Headers "X-User-Email:" and "X-User-Token" required
+
+
+```shell
+curl "http://localhost:3000/v1/users/22/decline"
+  -H "X-User-Token: 2rkx82qQJYqZPyDdyGpz"
+  -H "X-User-Email: kyra@schroeder.net"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "is_friend": false,
+    "friends": 1,
+    "data": {
+        "id": 22,
+        "email": "temmir@gmail.com",
+        "first_name": null,
+        "last_name": null,
+        "graduation_date": "2017-01-01",
+        "specialty_id": 1,
+        "specialty": "Информационные системы",
+        "faculty": "Инженерии и естественных наук",
+        "industry": null
+    }
+}
+```
+
+
+
+### HTTP Request
+
+`PUT http://localhost:3000/v1/users/(:user_id)/decline`
+
+### URL Parameters
+
+Parameter | Required | Type | Description
+--------- | ------- |------| -----------
+(:user_id) | Yes | int | Id of user which you want to add as friend
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+##Get Requested Friendships
+
+This endpoint shows list of friendship requests for current user.
+Headers "X-User-Email:" and "X-User-Token" required
+
+
+```shell
+curl "http://localhost:3000/v1/requested_friends"
+  -H "X-User-Token: 2rkx82qQJYqZPyDdyGpz"
+  -H "X-User-Email: kyra@schroeder.net"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "data": [
+        {
+            "id": 4,
+            "email": "macie_howell@smitham.com",
+            "first_name": "Claude",
+            "last_name": "Fritsch",
+            "graduation_date": "2016-03-13",
+            "specialty_id": 19,
+            "faculty_id": 3,
+            "industry": []
+        },
+        {
+            "id": 1,
+            "email": "zshanabek@gmail.com",
+            "first_name": "Anya",
+            "last_name": "Kessler",
+            "graduation_date": "2017-01-26",
+            "specialty_id": 1,
+            "faculty_id": 3,
+            "industry": []
+        }
+    ]
+}
+```
+
+
+
+### HTTP Request
+
+`GET http://localhost:3000/v1/requested_friends`
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+##Get Pending Friendships
+
+This endpoint shows list of currents user's friendship requests,that are not accepted or declined yet.
+Headers "X-User-Email:" and "X-User-Token" required
+
+
+```shell
+curl "http://localhost:3000/v1/pending_friends"
+  -H "X-User-Token: 2rkx82qQJYqZPyDdyGpz"
+  -H "X-User-Email: zshanabek@gmail.com"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "data": [
+        {
+            "id": 2,
+            "email": "haie_auer@oberbrunner.com",
+            "first_name": "Garfield",
+            "last_name": "Pfannerstill",
+            "graduation_date": "2013-10-21",
+            "specialty_id": 21,
+            "faculty_id": 1,
+            "industry": []
+        },
+        {
+            "id": 3,
+            "email": "aracely.predovic@mayershanahan.co",
+            "first_name": "Princess",
+            "last_name": "Hane",
+            "graduation_date": "2002-04-26",
+            "specialty_id": 16,
+            "faculty_id": 4,
+            "industry": []
+        }
+    ]
+}
+```
+
+
+
+### HTTP Request
+
+`GET http://localhost:3000/v1/pending_friends`
+
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+
+
+##Remove friend
+
+This endpoint removes specified user from current user's friends.
+Headers "X-User-Email:" and "X-User-Token" required
+
+
+```shell
+curl "http://localhost:3000/v1/users/(:user_id)/remove"
+  -H "X-User-Token: 2rkx82qQJYqZPyDdyGpz"
+  -H "X-User-Email: zshanabek@gmail.com"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "is_friend": false,
+    "friends": 0,
+    "data": {
+        "id": 1,
+        "email": "zshanabek@gmail.com",
+        "first_name": "Anya",
+        "last_name": "Kessler",
+        "graduation_date": "2017-01-26",
+        "specialty_id": 1,
+        "faculty_id": 3,
+        "industry": null
+    }
+}
+```
+
+
+
+### HTTP Request
+
+`PUT http://localhost:3000/v1/users/(:user_id)/remove`
+
+### URL Parameters
+
+Parameter | Required | Type | Description
+--------- | ------- |------| -----------
+(:user_id) | Yes | int | Id of user which you want to remove from friends list
+
+### Headers
+Header Name | Description
+------------|---------
+X-User-Email | Current user's email
+X-User-Token | Current user's authentification token for current session 
+
+
+# Static Data
+
+Requests to get static data as: faculties, specialties and industries
+
+
+## Get Faculty list
+
+```shell
+  curl "http://localhost:3000/v1/faculties"
+```
+
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Инженерии и естественных наук"
+        },
+        {
+            "id": 2,
+            "name": "Юриспруденции и социально-гуманитарных наук"
+        },
+        {
+            "id": 3,
+            "name": "Педогогических и гуманитарных наук"
+        },
+        {
+            "id": 4,
+            "name": "Бизнес-школа СДУ"
+        }
+    ]
+}
+```
+
+This endpoint get list of faculties
+
+
+### HTTP Request
+
+`GET http://localhost:3000/v1/faculties`
+
+
+
+
+## Get Specialty list
+
+
+```shell
+  curl "http://localhost:3000/v1/specialties"
+```
+
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Информационные системы",
+            "faculty_id": 1
+        },
+        {
+            "id": 2,
+            "name": "Вычислительная техника и программное обеспечение",
+            "faculty_id": 1
+        },
+        {
+            "id": 3,
+            "name": "Математика (научная)",
+            "faculty_id": 1
+        }
+    ]
+}
+```
+
+This endpoint get list of specialties with faculty ids
+
+
+### HTTP Request
+
+`GET http://localhost:3000/v1/specialties`
+
+
+## Get Industry list
+
+
+```shell
+  curl "http://localhost:3000/v1/industries"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Маркетинг"
+        },
+        {
+            "id": 2,
+            "name": "Информационные технологии"
+        },
+        {
+            "id": 3,
+            "name": "Бухгалтерский учёт"
+        }
+    ]
+}
+```
+
+This endpoint get list of industries
+
+
+### HTTP Request
+
+`GET http://localhost:3000/v1/industries`
+
+
 
